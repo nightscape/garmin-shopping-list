@@ -13,7 +13,8 @@ class GarminShoppingDelegate extends WatchUi.BehaviorDelegate {
 
     function onSelect() as Boolean {
         System.println("onSelect called");
-        sendHttpPost();
+        // Starten Sie den Sync-Vorgang
+        Communications.startSync();
         return true;
     }
 

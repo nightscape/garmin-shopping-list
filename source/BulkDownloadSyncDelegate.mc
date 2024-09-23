@@ -49,10 +49,14 @@ class BulkDownloadDelegate extends Communications.SyncDelegate
             Application.Storage.setValue("jsonResponse", data);
             Communications.notifySyncProgress(100);
             Communications.notifySyncComplete(null);
+            // Zurück zur Hauptansicht wechseln
+            WatchUi.switchToView(new GarminShoppingView(), new GarminShoppingDelegate(), WatchUi.SLIDE_IMMEDIATE);
         } else if (retries > 0) {
             sendRequest(retries - 1);
         } else {
             Communications.notifySyncComplete(Lang.format("Error: $1$\nParameter: $2$", [ code, data ]));
+            // Auch bei Fehler zur Hauptansicht wechseln
+            WatchUi.switchToView(new GarminShoppingView(), new GarminShoppingDelegate(), WatchUi.SLIDE_IMMEDIATE);
         }
     }
 }

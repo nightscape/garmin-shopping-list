@@ -20,14 +20,22 @@ class GarminShoppingView extends WatchUi.View {
         // Laden der JSON-Antwort beim Anzeigen der View
         var jsonResponse = Storage.getValue("jsonResponse");
         if (jsonResponse != null) {
-            _text = jsonResponse.toString();
+            var data = JsonParser.parse(jsonResponse);
+            if (data instanceof Dictionary && data.hasKey("items")) {
+                var items = data["items"] as Array<Dictionary>;
+                _text = "Items: " + items.size();
+            } else {
+                _text = "Invalid data format";
+            }
         } else {
             _text = "No data available";
         }
+        WatchUi.requestUpdate();
     }
 
     function setText(texts) as Void {
         _text = texts.toString();
+        WatchUi.requestUpdate();
     }
 
     function onUpdate(dc as Dc) as Void {
@@ -35,8 +43,8 @@ class GarminShoppingView extends WatchUi.View {
         dc.clear();
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
 
-        // Anzeigen der JSON-Antwort
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - 30, Graphics.FONT_SMALL, _text, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
+        // Anzeigen der Anzahl der Items oder einer Statusnachricht
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_MEDIUM, _text, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     function onHide() as Void {
