@@ -1,22 +1,3 @@
-import Toybox.Lang;
-import Toybox.System;
-import Toybox.WatchUi;
-
-class GarminShoppingMenuDelegate extends WatchUi.Menu2InputDelegate {
-    function initialize() {
-        Menu2InputDelegate.initialize();
-    }
-
-    function onSelect(item as MenuItem) as Void {
-        if (item instanceof CheckboxMenuItem) {
-            item.setChecked(!item.isChecked());
-        }
-    }
-
-    function onBack() as Void {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
-    }
-}
 import Toybox.WatchUi;
 import Toybox.System;
 
@@ -26,13 +7,10 @@ class GarminShoppingMenuDelegate extends WatchUi.Menu2InputDelegate {
         Menu2InputDelegate.initialize();
     }
 
-    function onSelect(item) {
-        var itemId = item.getId();
-        if (itemId != null && itemId.find("item_") == 0) {
-            // Toggle the checkbox state
-            item.setChecked(!item.isChecked());
-            WatchUi.requestUpdate();
-        }
+    function onSelect(item as MenuItem) {
+        var cbItem = item as WatchUi.CheckboxMenuItem;
+        cbItem.setChecked(!cbItem.isChecked());
+        WatchUi.requestUpdate();
     }
 
     function onBack() {
