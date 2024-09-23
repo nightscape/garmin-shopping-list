@@ -4,10 +4,11 @@ import Toybox.WatchUi;
 import Toybox.Application.Storage;
 
 class GarminShoppingView extends WatchUi.View {
-    hidden var _menu as WatchUi.Menu2;
+    hidden var _menu as WatchUi.Menu2?;
 
     function initialize() {
         View.initialize();
+        _menu = null;
     }
 
     function onLayout(dc as Dc) as Void {
@@ -40,21 +41,5 @@ class GarminShoppingView extends WatchUi.View {
     }
 
     function onHide() as Void {
-    }
-}
-
-class GarminShoppingMenuDelegate extends WatchUi.Menu2InputDelegate {
-    function initialize() {
-        Menu2InputDelegate.initialize();
-    }
-
-    function onSelect(item as MenuItem) as Void {
-        if (item instanceof CheckboxMenuItem) {
-            item.setChecked(!item.isChecked());
-        }
-    }
-
-    function onBack() as Void {
-        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }
