@@ -4,7 +4,7 @@ import Toybox.WatchUi;
 import Toybox.Application.Storage;
 
 class GarminShoppingView extends WatchUi.View {
-    hidden var _menu as WatchUi.Menu2?;
+    hidden var _menu as WatchUi.CheckboxMenu2?;
 
     function initialize() {
         View.initialize();
@@ -16,7 +16,7 @@ class GarminShoppingView extends WatchUi.View {
     }
 
     function onShow() as Void {
-        _menu = new WatchUi.Menu2({:title=>"Shopping List"});
+        _menu = new WatchUi.CheckboxMenu2({:title=>"Shopping List"});
         var jsonResponse = Storage.getValue("jsonResponse");
         if (jsonResponse != null) {
             var data = jsonResponse as Dictionary;
