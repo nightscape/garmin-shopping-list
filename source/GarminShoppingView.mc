@@ -9,7 +9,6 @@ class GarminShoppingView extends WatchUi.View {
     function initialize() {
         View.initialize();
         _text = "Starting";
-        Application.Storage.setValue("jsonResponse", "[]");
     }
 
     function onLayout(dc as Dc) as Void {
@@ -20,7 +19,7 @@ class GarminShoppingView extends WatchUi.View {
         // Laden der JSON-Antwort beim Anzeigen der View
         var jsonResponse = Storage.getValue("jsonResponse");
         if (jsonResponse != null) {
-            var data = JsonParser.parse(jsonResponse);
+            var data = jsonResponse as Dictionary;
             if (data instanceof Dictionary && data.hasKey("items")) {
                 var items = data["items"] as Array<Dictionary>;
                 _text = "Items: " + items.size();
