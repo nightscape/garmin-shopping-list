@@ -1,7 +1,7 @@
 import Toybox.Lang;
 import Toybox.Graphics;
 import Toybox.WatchUi;
-using Toybox.System as Sys;
+import Toybox.Application.Storage;
 
 class GarminShoppingView extends WatchUi.View {
     hidden var _text;
@@ -16,7 +16,15 @@ class GarminShoppingView extends WatchUi.View {
     }
 
     function onShow() as Void {
+        // Laden der JSON-Antwort beim Anzeigen der View
+        var jsonResponse = Storage.getValue("jsonResponse");
+        if (jsonResponse != null) {
+            _text = jsonResponse.toString();
+        } else {
+            _text = "No data available";
+        }
     }
+
     function setText(texts) as Void {
         _text = texts.toString();
     }
@@ -25,10 +33,9 @@ class GarminShoppingView extends WatchUi.View {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-        //var settings = Sys.getDeviceSettings();
 
-        var wifiText = "Shopping list is " ;//+ (settings[:wifiEnabled] ? "enabled" : "disabled");
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - 30, Graphics.FONT_MEDIUM, wifiText, Graphics.TEXT_JUSTIFY_CENTER);
+        // Anzeigen der JSON-Antwort
+        dc.drawText(dc.getWidth()/2, dc.getHeight()/2 - 30, Graphics.FONT_SMALL, _text, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     function onHide() as Void {

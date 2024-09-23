@@ -45,7 +45,8 @@ class BulkDownloadDelegate extends Communications.SyncDelegate
     // Handle download completion
     function onRequestComplete(code, data, retries as Number) {
         if (code == 200) {
-
+            // Speichern der JSON-Antwort
+            Application.Storage.setValue("jsonResponse", data);
             Communications.notifySyncProgress(100);
             Communications.notifySyncComplete(null);
         } else if (retries > 0) {
