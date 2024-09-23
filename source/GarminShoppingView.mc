@@ -22,9 +22,15 @@ class GarminShoppingView extends WatchUi.View {
             var data = jsonResponse as Dictionary;
             if (data instanceof Dictionary && data.hasKey("items")) {
                 var items = data["items"] as Array<Dictionary>;
+                items.sort(method(:compareItems));
+                var currentCategory = "";
                 for (var i = 0; i < items.size(); i++) {
                     var item = items[i];
-                    _menu.addItem(new WatchUi.CheckboxMenuItem(item["name"], item["cat"], "item_" + i, false, {}));
+                    if (item["cat"] != currentCategory) {
+                        currentCategory = item["cat"];
+                        _menu.addItem(new WatchUi.MenuItem(currentCategory, null, "cat_" + i, {}));
+                    }
+                    _menu.addItem(new WatchUi.CheckboxMenuItem(item["name"], null, "item_" + i, false, {}));
                 }
             } else {
                 _menu.addItem(new WatchUi.CheckboxMenuItem("Invalid data format", null, null, false, {}));
@@ -41,5 +47,9 @@ class GarminShoppingView extends WatchUi.View {
     }
 
     function onHide() as Void {
+    }
+
+    static function compareItems(a as Dictionary, b as Dictionary) as Number {
+        return a["cat"].compare(b["cat"]);
     }
 }

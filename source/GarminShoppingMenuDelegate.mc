@@ -8,9 +8,14 @@ class GarminShoppingMenuDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onSelect(item as MenuItem) {
-        var cbItem = item as WatchUi.CheckboxMenuItem;
-        cbItem.setChecked(!cbItem.isChecked());
-        WatchUi.requestUpdate();
+        if (item instanceof WatchUi.CheckboxMenuItem) {
+            var cbItem = item as WatchUi.CheckboxMenuItem;
+            cbItem.setChecked(!cbItem.isChecked());
+            WatchUi.requestUpdate();
+        } else {
+            // Wenn es ein Kategorie-Element ist, machen wir nichts
+            System.println("Kategorie ausgewählt: " + item.getLabel());
+        }
     }
 
     function onBack() {
@@ -18,8 +23,16 @@ class GarminShoppingMenuDelegate extends WatchUi.Menu2InputDelegate {
     }
 
     function onDone() {
-        // Here you can implement any logic needed when the user is done with the shopping list
-        // For now, we'll just go back to the previous view
+        // Hier können Sie die Logik implementieren, die ausgeführt werden soll, 
+        // wenn der Benutzer mit der Einkaufsliste fertig ist
+        // Zum Beispiel: Speichern des aktuellen Zustands der Einkaufsliste
+        saveShoppingListState();
         WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
+    }
+
+    function saveShoppingListState() {
+        // Implementieren Sie hier die Logik zum Speichern des Zustands der Einkaufsliste
+        System.println("Einkaufslisten-Zustand wird gespeichert...");
+        // TODO: Implementieren Sie die tatsächliche Speicherlogik
     }
 }
