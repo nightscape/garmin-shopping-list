@@ -24,7 +24,7 @@ class GarminShoppingView extends WatchUi.View {
                 var items = data["items"] as Array<Dictionary>;
                 for (var i = 0; i < items.size(); i++) {
                     var item = items[i];
-                    _menu.addItem(new WatchUi.CheckboxMenuItem(item["name"], null, "item_" + i, false, {}));
+                    _menu.addItem(new WatchUi.CheckboxMenuItem(item["name"], item["cat"], "item_" + i, false, {}));
                 }
             } else {
                 _menu.addItem(new WatchUi.CheckboxMenuItem("Invalid data format", null, null, false, {}));
