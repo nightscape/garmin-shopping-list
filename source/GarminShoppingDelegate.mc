@@ -2,9 +2,11 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.Communications;
 import Toybox.System;
+import Toybox.JSON;
 
 class GarminShellyDelegate extends WatchUi.BehaviorDelegate {
-    var BASE_URL = "https://app-thatshoppinglist-dot-servemarkenapps.appspot.com/!q4ChRZiH_noxF02UYGJ-Mt76RcjoU2/api/list/DEAAHZVDYNRRMHDKGA"
+    var BASE_URL = "https://app-thatshoppinglist-dot-servemarkenapps.appspot.com/!q4ChRZiH_noxF02UYGJ-Mt76RcjoU2/api/list/DEAAHZVDYNRRMHDKGA";
+    private var _items as Array<Item> = [];
 
     function initialize() {
         BehaviorDelegate.initialize();
@@ -31,7 +33,12 @@ class GarminShellyDelegate extends WatchUi.BehaviorDelegate {
     function onReceive(responseCode as Number, data as Dictionary or String or Null) as Void {
         if (responseCode == 200) {
             System.println("HTTP GET request successful");
-            WatchUi.requestUpdate();
+            if (data instanceof Dictionary) {
+                parseItems(data);
+                WatchUi.requestUpdate();
+            } else {
+                System.println("Unexpected data format");
+            }
         } else {
             System.println("HTTP GET request failed with code: " + responseCode);
             if (data instanceof String) {
@@ -42,5 +49,26 @@ class GarminShellyDelegate extends WatchUi.BehaviorDelegate {
                 System.println("No response data");
             }
         }
+    }
+
+    function parseItems(data as Dictionary) as Void {
+        _items = [];
+        if (data.hasKey("items") && data["items"] instanceof Array) {
+            var itemsArray = data["items"] as Array<Dictionary>;
+            for (var i = 0; i < itemsArray.size(); i++) {
+                var itemData = itemsArray[i];
+                if (itemData.hasKey("cat") && itemData.hasKey("name")) {
+                    var cat = itemData["cat"] as String;
+                    var name = itemData["name"] as String;
+                    var count = itemData.hasKey("count") ? itemData["count"] as String : null;
+                    _items.add(new Item(cat, name, count));
+                }
+            }
+        }
+        System.println("Parsed " + _items.size() + " items");
+    }
+
+    function getItems() as Array<Item> {
+        return _items;
     }
 }
