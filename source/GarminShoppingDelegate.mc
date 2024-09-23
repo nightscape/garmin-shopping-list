@@ -2,9 +2,8 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 import Toybox.Communications;
 import Toybox.System;
-import Toybox.JSON;
 
-class GarminShellyDelegate extends WatchUi.BehaviorDelegate {
+class GarminShoppingDelegate extends WatchUi.BehaviorDelegate {
     var BASE_URL = "https://app-thatshoppinglist-dot-servemarkenapps.appspot.com/!q4ChRZiH_noxF02UYGJ-Mt76RcjoU2/api/list/DEAAHZVDYNRRMHDKGA";
     private var _items as Array<Item> = [];
 

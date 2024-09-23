@@ -9,6 +9,7 @@ class GarminShoppingView extends WatchUi.View {
     function initialize() {
         View.initialize();
         _text = "Starting";
+        Application.Storage.setValue("jsonResponse", "[]");
     }
 
     function onLayout(dc as Dc) as Void {
