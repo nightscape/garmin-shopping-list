@@ -4,11 +4,10 @@ import Toybox.WatchUi;
 import Toybox.Application.Storage;
 
 class GarminShoppingView extends WatchUi.View {
-    hidden var _text;
+    hidden var _menu as WatchUi.Menu2;
 
     function initialize() {
         View.initialize();
-        _text = "Starting";
     }
 
     function onLayout(dc as Dc) as Void {
@@ -16,36 +15,46 @@ class GarminShoppingView extends WatchUi.View {
     }
 
     function onShow() as Void {
-        // Laden der JSON-Antwort beim Anzeigen der View
+        _menu = new WatchUi.Menu2({:title=>"Shopping List"});
         var jsonResponse = Storage.getValue("jsonResponse");
         if (jsonResponse != null) {
             var data = jsonResponse as Dictionary;
             if (data instanceof Dictionary && data.hasKey("items")) {
                 var items = data["items"] as Array<Dictionary>;
-                _text = "Items: " + items.size();
+                for (var i = 0; i < items.size(); i++) {
+                    var item = items[i];
+                    _menu.addItem(new WatchUi.CheckboxMenuItem(item["name"], null, "item_" + i, false, {}));
+                }
             } else {
-                _text = "Invalid data format";
+                _menu.addItem(new WatchUi.MenuItem("Invalid data format", null, null, {}));
             }
         } else {
-            _text = "No data available";
+            _menu.addItem(new WatchUi.MenuItem("No data available", null, null, {}));
         }
-        WatchUi.requestUpdate();
-    }
-
-    function setText(texts) as Void {
-        _text = texts.toString();
-        WatchUi.requestUpdate();
+        WatchUi.pushView(_menu, new GarminShoppingMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
     }
 
     function onUpdate(dc as Dc) as Void {
         dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
         dc.clear();
-        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
-
-        // Anzeigen der Anzahl der Items oder einer Statusnachricht
-        dc.drawText(dc.getWidth()/2, dc.getHeight()/2, Graphics.FONT_MEDIUM, _text, Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER);
     }
 
     function onHide() as Void {
+    }
+}
+
+class GarminShoppingMenuDelegate extends WatchUi.Menu2InputDelegate {
+    function initialize() {
+        Menu2InputDelegate.initialize();
+    }
+
+    function onSelect(item as MenuItem) as Void {
+        if (item instanceof CheckboxMenuItem) {
+            item.setChecked(!item.isChecked());
+        }
+    }
+
+    function onBack() as Void {
+        WatchUi.popView(WatchUi.SLIDE_IMMEDIATE);
     }
 }

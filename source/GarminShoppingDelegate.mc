@@ -5,14 +5,13 @@ import Toybox.System;
 
 class GarminShoppingDelegate extends WatchUi.BehaviorDelegate {
     var BASE_URL = "https://app-thatshoppinglist-dot-servemarkenapps.appspot.com/!q4ChRZiH_noxF02UYGJ-Mt76RcjoU2/api/list/DEAAHZVDYNRRMHDKGA";
-    private var _items as Array<Item> = [];
 
     function initialize() {
         BehaviorDelegate.initialize();
     }
 
-    function onSelect() as Boolean {
-        System.println("onSelect called");
+    function onMenu() as Boolean {
+        System.println("onMenu called");
         // Starten Sie den Sync-Vorgang
         Communications.startSync();
         return true;
@@ -34,8 +33,8 @@ class GarminShoppingDelegate extends WatchUi.BehaviorDelegate {
         if (responseCode == 200) {
             System.println("HTTP GET request successful");
             if (data instanceof Dictionary) {
-                parseItems(data);
-                WatchUi.requestUpdate();
+                Storage.setValue("jsonResponse", data);
+                WatchUi.switchToView(new GarminShoppingView(), new GarminShoppingDelegate(), WatchUi.SLIDE_IMMEDIATE);
             } else {
                 System.println("Unexpected data format");
             }
@@ -49,26 +48,5 @@ class GarminShoppingDelegate extends WatchUi.BehaviorDelegate {
                 System.println("No response data");
             }
         }
-    }
-
-    function parseItems(data as Dictionary) as Void {
-        _items = [];
-        if (data.hasKey("items") && data["items"] instanceof Array) {
-            var itemsArray = data["items"] as Array<Dictionary>;
-            for (var i = 0; i < itemsArray.size(); i++) {
-                var itemData = itemsArray[i];
-                if (itemData.hasKey("cat") && itemData.hasKey("name")) {
-                    var cat = itemData["cat"] as String;
-                    var name = itemData["name"] as String;
-                    var count = itemData.hasKey("count") ? itemData["count"] as String : null;
-                    _items.add(new Item(cat, name, count));
-                }
-            }
-        }
-        System.println("Parsed " + _items.size() + " items");
-    }
-
-    function getItems() as Array<Item> {
-        return _items;
     }
 }
