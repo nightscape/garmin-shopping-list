@@ -2,54 +2,39 @@ import Toybox.Lang;
 import Toybox.Graphics;
 import Toybox.WatchUi;
 import Toybox.Application.Storage;
+import Toybox.Application.Properties;
+import ItemSync;
 
-class GarminShoppingView extends WatchUi.View {
-    hidden var _menu as WatchUi.CheckboxMenu?;
+class GarminShoppingView extends Ui.ItemView {
+  function initialize() {
+    var categoryOrder = Properties.getValue("CategoryOrder");
+    Ui.ItemView.initialize("Shopping List", new CategoryComparator(categoryOrder));
+  }
+  function getItems(data as Object) as Array<Dictionary> {
+    return (data as Dictionary)["data"]["items"];
+  }
+  function getItemName(item as Dictionary) as String {
+    return item["name"];
+  }
+  function getItemCategory(item as Dictionary) as String {
+    return item["cat"];
+  }
+}
 
-    function initialize() {
-        View.initialize();
-        _menu = null;
+class CategoryComparator {
+    var mCategoryOrder as String;
+    function initialize(categoryOrder as String) {
+        mCategoryOrder = categoryOrder;
     }
-
-    function onLayout(dc as Dc) as Void {
-        setLayout(Rez.Layouts.MainLayout(dc));
-    }
-
-    function onShow() as Void {
-        _menu = new WatchUi.CheckboxMenu({:title=>"Shopping List"});
-        var jsonResponse = Storage.getValue("jsonResponse");
-        if (jsonResponse != null) {
-            var data = jsonResponse as Dictionary;
-            if (data instanceof Dictionary && data.hasKey("items")) {
-                var items = data["items"] as Array<Dictionary>;
-                items.sort(method(:compareItems));
-                var currentCategory = "";
-                for (var i = 0; i < items.size(); i++) {
-                    var item = items[i];
-                    if (item["cat"] != currentCategory) {
-                        currentCategory = item["cat"];
-                        _menu.addItem(new WatchUi.MenuItem(currentCategory, null, "cat_" + i, {}));
-                    }
-                    _menu.addItem(new WatchUi.CheckboxMenuItem(item["name"], null, "item_" + i, false, {}));
-                }
-            } else {
-                _menu.addItem(new WatchUi.CheckboxMenuItem("Invalid data format", null, null, false, {}));
-            }
-        } else {
-            _menu.addItem(new WatchUi.CheckboxMenuItem("No data available", null, null, false, {}));
+    function categoryOrderFor(a as Object) as Number {
+        var cat = (a as Dictionary)["cat"];
+        var index = mCategoryOrder.find(cat);
+        if (index == null) {
+            return mCategoryOrder.length();
         }
-        WatchUi.pushView(_menu, new GarminShoppingMenuDelegate(), WatchUi.SLIDE_IMMEDIATE);
+        return index;
     }
-
-    function onUpdate(dc as Dc) as Void {
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
-        dc.clear();
-    }
-
-    function onHide() as Void {
-    }
-
-    static function compareItems(a as Dictionary, b as Dictionary) as Number {
-        return a["cat"].compare(b["cat"]);
-    }
+  function compare(a as Object, b as Object) as Number {
+    return categoryOrderFor(a).compareTo(categoryOrderFor(b));
+  }
 }

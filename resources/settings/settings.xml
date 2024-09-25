@@ -1,0 +1,5 @@
+<settings>
+    <setting propertyKey="@Properties.ListId" title="@Strings.ListIdTitle">
+        <settingConfig type="alphaNumeric" required="true" />
+    </setting>
+</settings>

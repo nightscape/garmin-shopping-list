@@ -1,0 +1,6 @@
+# Do not hand edit this file. To make changes run the
+# "Configure Monkey Barrels" command.
+
+ItemSync = "../garmin-item-view/ItemSync/bin/ItemSync-0.0.0.barrel"
+#ItemSync = "/Users/martin/Workspaces/garmin/garmin-item-view/ItemSync/monkey.jungle"
+base.barrelPath = $(base.barrelPath);$(ItemSync)
